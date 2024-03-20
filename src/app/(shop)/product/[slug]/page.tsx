@@ -1,8 +1,12 @@
+export const revalidate = 604800; //7 días
+
 import { notFound } from 'next/navigation';
 
 import { initialData } from '@/seed/seed';
 import { titleFont } from '@/config/fonts';
-import { ProductMobileSlideshow, ProductSlideshow, QuantitySelector, SizeSelector } from '@/components';
+import { ProductMobileSlideshow, ProductSlideshow, QuantitySelector, SizeSelector, StockLabel } from '@/components';
+import { getProductBySlug } from '@/actions';
+import { Metadata, ResolvingMetadata } from 'next';
 
 interface Props {
   params: {
@@ -11,12 +15,37 @@ interface Props {
 }
 
 
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const slug = params.slug;
 
-export default function ( { params }: Props ) {
+  // fetch data
+  const product = await getProductBySlug(slug);
+
+  // optionally access and extend (rather than replace) parent metadata
+  // const previousImages = (await parent).openGraph?.images || []
+
+  return {
+    title: product?.title ?? "Producto no encontrado",
+    description: product?.description ?? "",
+    openGraph: {
+      title: product?.title ?? "Producto no encontrado",
+      description: product?.description ?? "",
+      // images: [], // https://misitioweb.com/products/image.png
+      images: [ `/products/${ product?.images[1] }`],
+    },
+  };
+}
+
+export default async function ProductBySlugPage({ params }: Props) {
 
   const { slug } = params;
-  const product = initialData.products.find( product => product.slug === slug );
-
+  const product = await getProductBySlug(slug);
+  console.log(product);
+  
   if ( !product ) {
     notFound();
   }
@@ -48,6 +77,8 @@ export default function ( { params }: Props ) {
 
       {/* Detalles */ }
       <div className="col-span-1 px-5">
+
+      <StockLabel slug={product.slug} />
 
         <h1 className={ ` ${ titleFont.className } antialiased font-bold text-xl` }>
           { product.title }
