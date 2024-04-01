@@ -5,9 +5,10 @@ import { notFound } from 'next/navigation';
 import { initialData } from '@/seed/seed';
 import { titleFont } from '@/config/fonts';
 import { ProductMobileSlideshow, ProductSlideshow, QuantitySelector, SizeSelector, StockLabel } from '@/components';
-import { getProductBySlug } from '@/actions';
+
 import { Metadata, ResolvingMetadata } from 'next';
 import { AddToCart } from './ui/AddToCart';
+import { getProductBySlug } from '@/actions/products/get-product-by-slug';
 
 interface Props {
   params: {

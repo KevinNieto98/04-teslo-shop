@@ -15,7 +15,7 @@ import {
 } from "react-icons/io5";
 
 import { useUIStore } from "@/store";
-import { logout } from "@/actions";
+import { logout } from "@/actions/auth/logout";
 
 export const Sidebar = () => {
   const isSideMenuOpen = useUIStore((state) => state.isSideMenuOpen);
