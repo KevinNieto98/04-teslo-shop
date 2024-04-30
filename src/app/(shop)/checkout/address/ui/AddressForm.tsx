@@ -7,6 +7,8 @@ import { useAddressStore } from "@/store";
 import clsx from "clsx";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -29,6 +31,7 @@ interface Props {
   
 export const AddresForm = ({ countries, userStoredAddress = {} }: Props) => {
 
+    const router = useRouter();
     const { handleSubmit, register, formState: { isValid }, reset } = useForm<FormInputs>({
         defaultValues: {
           ...(userStoredAddress as any),
@@ -50,12 +53,15 @@ export const AddresForm = ({ countries, userStoredAddress = {} }: Props) => {
 
     const onSubmit = async (data: FormInputs) => {
         const { rememberAddress, ...restAddress } = data;
+        setAddress(restAddress);
 
         if ( rememberAddress ) {
             await setUserAddress(restAddress, session!.user.id );
           } else {
             await deleteUserAddress(session!.user.id);
           }
+        
+        router.push('/checkout');
 
     }
 
@@ -150,9 +156,9 @@ export const AddresForm = ({ countries, userStoredAddress = {} }: Props) => {
                 </div>
                 <button
                     disabled={!isValid}
-                    // href="/checkout"
+                    //href="/checkout"
                     type="submit"
-                    // className="btn-primary flex w-full sm:w-1/2 justify-center "
+                    //className="btn-primary flex w-full sm:w-1/2 justify-center "
                     className={clsx({
                         'btn-primary': isValid,
                         'btn-disabled': !isValid,
